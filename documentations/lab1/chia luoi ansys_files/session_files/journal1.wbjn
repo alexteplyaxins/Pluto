@@ -1,0 +1,45 @@
+# encoding: utf-8
+# 2023 R1
+SetScriptVersion(Version="23.1.153")
+template1 = GetTemplate(TemplateName="Geometry")
+system1 = template1.CreateSystem()
+geometry1 = system1.GetContainer(ComponentName="Geometry")
+geometry1.Edit(IsDiscoveryGeometry=True)
+geometry1.Exit()
+Save(Overwrite=True)
+unitSystem1 = SetProjectUnitSystem(UnitSystemName="US Engineering")
+geometry1.Edit(IsDiscoveryGeometry=True)
+geometry1.Exit()
+system1.Delete()
+template2 = GetTemplate(TemplateName="Mesh")
+system2 = template2.CreateSystem()
+system2.Delete()
+system3 = template1.CreateSystem()
+geometry2 = system3.GetContainer(ComponentName="Geometry")
+geometry2.Edit(IsDiscoveryGeometry=True)
+geometry2.Exit()
+system3.Delete()
+template3 = GetTemplate(TemplateName="Discovery")
+system4 = template3.CreateSystem()
+discovery1 = system4.GetContainer(ComponentName="Geometry")
+discovery1.Edit(IsDiscoveryGeometry=True)
+template4 = GetTemplate(
+    TemplateName="Static Structural",
+    Solver="ANSYS")
+system5 = template4.CreateSystem(
+    Position="Right",
+    RelativeTo=system4)
+discovery1.Exit()
+geometryComponent1 = system5.GetComponent(Name="Geometry")
+geometryComponent2 = system4.GetComponent(Name="Geometry")
+geometryComponent1.ReplaceWithShare(
+    TargetSystem=system5,
+    ComponentToShare=geometryComponent2,
+    SourceSystem=system4)
+Save(Overwrite=True)
+modelComponent1 = system5.GetComponent(Name="Model")
+modelComponent1.Refresh()
+model1 = system5.GetContainer(ComponentName="Model")
+model1.Edit()
+model1.Edit()
+Save(Overwrite=True)
